@@ -37,5 +37,7 @@ request.addEventListener('load',function(){
 
 
 
-getCountryData('portugal');
+
 getCountryData('usa');
+getCountryData('sri lanka')
+getCountryData('india')

@@ -6,7 +6,7 @@ const countriesContainer = document.querySelector('.countries');
 ///////////////////////////////////////
 
 const renderCountry = function (data, className = '') {
-  const html = `<article class="country" ${className}>
+  const html = `<article class="country ${className}">
   <img class="country__img" src="${data.flag}" />
   <div class="country__data">
     <h3 class="country__name">${data.name}</h3>
@@ -20,7 +20,7 @@ const renderCountry = function (data, className = '') {
   </div>
 </article>`;
   countriesContainer.insertAdjacentHTML('beforeend', html);
-  //countriesContainer.style.opacity = 1;
+  countriesContainer.style.opacity = 1;
 };
 
 // const renderError = function (msg) {
@@ -144,23 +144,56 @@ const renderCountry = function (data, className = '') {
 //getCountryData(',nndbv');
 //challenge.......................................................
 
-const whereIam = function (lat, lng) {
+// const whereIam = function (lat, lng) {
+//   fetch(
+//     `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+
+//   )
+//     .then(response => {
+//       if(!response.ok) throw new Error(`Problem with geocoding ${response.status}`);
+//       return response.json()})
+//     .then(data => {
+//       //console.log(data);
+//        console.log(`You are in ${data.city}, ${data.countryName}`);
+//       return fetch(`https://restcountries.com/v2/name/${data.countryName}`);
+
+//     })
+//     .then(response => {
+//       if(!response.ok) throw new Error(`Country not found ${response.status}`);
+//       return response.json()})
+//     .then(data => {
+//       renderCountry(data[0]);
+//       const neighbour = data[0].borders?.[0];
+
+//       if (!neighbour) throw new Error('No neighbour found!');
+
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+//     })
+//     .catch(err => console.error(`${err.message}`));
+// };
+
+// // whereIam(19.037, 72.873);
+// // whereIam(-33.933, 18.474);
+// btn.addEventListener('click', function () {
+//     whereIam(52.508, 13.381);
+//   });
+
+const whereIam = function (lan, lng) {
   fetch(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
-    
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lan}&longitude=${lng}`
   )
-    .then(response => {
-      if(!response.ok) throw new Error(`Problem with geocoding ${response.status}`);
-      return response.json()})
-    .then(data => {
-      //console.log(data);
-       console.log(`You are in ${data.city}, ${data.countryName}`);
-      return fetch(`https://restcountries.com/v2/name/${data.countryName}`);
-      
+    .then(res => {
+      if (!res.ok) throw new Error(`Problem with geocoding ${res.status}`);
+      return res.json();
     })
-    .then(response => {
-      if(!response.ok) throw new Error(`Country not found ${response.status}`);
-      return response.json()})
+    .then(data => {
+      console.log(`You are in ${data.city}, ${data.countryName}`);
+      return fetch(`https://restcountries.com/v2/name/${data.countryName}`);
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Country not found ${res.status}`);
+      return res.json();
+    })
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders?.[0];
@@ -169,12 +202,25 @@ const whereIam = function (lat, lng) {
 
       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
     })
-    .catch(err => console.error(`${err.message}`));
+    .then(res => {
+      if (!res.ok) throw new Error(`Country not found ${res.status}`);
+      return res.json();
+    })
+
+    .then(data => renderCountry(data, "neighbour"));
 };
 
-
-// whereIam(19.037, 72.873);
-// whereIam(-33.933, 18.474);
 btn.addEventListener('click', function () {
-    whereIam(52.508, 13.381);
-  });
+  whereIam(52.508, 13.381);
+});
+
+// event loop in practice.......................................................................................
+
+// console.log('Test start');
+// setTimeout(() => console.log('0 sec timer'), 0);
+// Promise.resolve('Resolved promise 1').then(res => console.log(res));
+// Promise.resolve('Resolved promise 2').then(res => {
+//   for(let i=0;i<1000000000;i++){}
+//   setTimeout(() => console.log('1 sec timer'), 0);
+//   console.log(res)});
+// console.log('Test end');
